@@ -1,0 +1,17 @@
+{
+  "name": "smartbrainapi",
+  "version": "0.0.1",
+  "main": "script.js",
+  "repository": "https://github.com/crowbarcode/SmartBrain-API.git",
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "author": "Chris Winter <corvusnebula@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.1"
+  }
+}
