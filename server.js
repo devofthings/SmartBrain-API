@@ -6,15 +6,12 @@ var cors = require('cors')
 const database = {
   users: [{
     id: '123',
-    name: 'John Snow',
-    email: 'getpwnd@grr.la',
+    name: 'Chris',
+    email: 'ez@grr.la',
     entries: 0,
-    joined: new Date()
-  }],
-  secrets: {
-    users_id: '123',
-    hash: 'wghhh'
-  }
+    joined: new Date(),
+    password: 'cookies'
+  }]
 }
 
 app.use(cors());
@@ -22,17 +19,17 @@ app.use(bodyParser.json());
 app.get('/', (req, res) => res.send('You have found the server congrats..'))
 
 app.post('/signin', (req, res) => {
-  var a = JSON.parse(req.body);
-  if (a.username === database.users[0].email && a.password === database.secrets.hash) {
-    res.send('signed in');
+  var a = req.body;
+  if (a.email === database.users[0].email && a.password === database.users[0].password) {
+    res.json(database.users[0])
   } else {
     res.json('access denied');
   }
 })
 
-app.post('/findface', (req, res) => {
+app.put('/image', (req, res) => {
   database.users.forEach(user => {
-    if (user.email === req.body.email) {
+    if (user.id === req.body.id) {
       user.entries++
       res.json(user)
     }
