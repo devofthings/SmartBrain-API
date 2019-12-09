@@ -1,19 +1,65 @@
-const express = require('express');
+const express = require('express')
+const app = express()
+var bodyParser = require('body-parser')
+var cors = require('cors')
 
-const app = express();
+const database = {
+  users: [{
+    id: '123',
+    name: 'John Snow',
+    email: 'getpwnd@grr.la',
+    entries: 0,
+    joined: new Date()
+  }],
+  secrets: {
+    users_id: '123',
+    hash: 'wghhh'
+  }
+}
 
-app.get('/', (req, res) => {
-    res.send('this works')
+app.use(cors());
+app.use(bodyParser.json());
+app.get('/', (req, res) => res.send('You have found the server congrats..'))
+
+app.post('/signin', (req, res) => {
+  var a = JSON.parse(req.body);
+  if (a.username === database.users[0].email && a.password === database.secrets.hash) {
+    res.send('signed in');
+  } else {
+    res.json('access denied');
+  }
 })
 
-app.listen(3001, () => {
-    console.log('app is running on port 3001');
+app.post('/findface', (req, res) => {
+  database.users.forEach(user => {
+    if (user.email === req.body.email) {
+      user.entries++
+      res.json(user)
+    }
+  });
+  res.json('nope')
 })
 
-/*
-/ --> res = this is working
-/ signin --> POST = success/fail
-/ register --> POST = user
-/ profile/:userID --> GET = user
-/ image --> PUT --> user
-*/
+
+app.post('/register', (req, res) => {
+  database.users.push({
+    id: '124',
+    name: req.body.name,
+    email: req.body.email,
+    entries: 0,
+    joined: new Date()
+  })
+  res.json(database.users[database.users.length - 1])
+})
+
+app.get('/profile/:userId', (req, res) => {
+  database.users.forEach(user => {
+    if (user.id === req.params.userId) {
+      return res.json(user);
+    }
+  })
+  // res.json('no user')
+
+})
+
+app.listen(3000, () => console.log('Server is listening on http://localhost:3000'))
