@@ -2,10 +2,11 @@ const express = require('express')
 const app = express()
 var bodyParser = require('body-parser')
 var cors = require('cors')
+var _ = require('lodash')
 
 const database = {
   users: [{
-    id: '123',
+    id: '1',
     name: 'Chris',
     email: 'ez@grr.la',
     entries: 0,
@@ -19,12 +20,12 @@ app.use(bodyParser.json());
 app.get('/', (req, res) => res.send('You have found the server congrats..'))
 
 app.post('/signin', (req, res) => {
-  var a = req.body;
-  if (a.email === database.users[0].email && a.password === database.users[0].password) {
-    res.json(database.users[0])
-  } else {
-    res.json('access denied');
-  }
+  var request = req.body;
+  _.forEach(database.users, (user) => {
+    if (request.email === user.email && request.password === user.password) {
+      res.json(user)
+    }
+  })
 })
 
 app.put('/image', (req, res) => {
@@ -40,9 +41,10 @@ app.put('/image', (req, res) => {
 
 app.post('/register', (req, res) => {
   database.users.push({
-    id: '124',
+    id: (database.users.length+1).toString(),
     name: req.body.name,
     email: req.body.email,
+    password: req.body.password,
     entries: 0,
     joined: new Date()
   })
