@@ -1,6 +1,6 @@
 {
   "name": "smartbrainapi",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "main": "script.js",
   "repository": "https://github.com/crowbarcode/SmartBrain-API.git",
   "scripts": {

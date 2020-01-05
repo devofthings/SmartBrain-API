@@ -1,23 +1,51 @@
-# SmartBrain-API - BACKEND
+# SmartBrain - BACKEND
 My version of the final project for the [Zero To Mastery](https://www.udemy.com/course/the-complete-web-developer-zero-to-mastery/) course
 
 ## Description
 This project provides the backend for the SmartBrain app
 
 ## Features
-* You can temporary register on the website until you restart the server
-* You can signin into the website with your created credentials
-* Provide the textfeld a link to a picture and it will detect the faces in it.
+* Register & Signin function
+* Detect 1-X faces in an image these will be highlighted with blue squares. 
 
-## Installation
+## Installation guide for local development
 
 1. clone this repo and also [this](https://github.com/crowbarcode/SmartBrain) repo
 2. run `yarn` in both of them
-3. grab your Clarifai API key [here](https://www.clarifai.com/)
-4. create a `secrets.js` file with this inside `export const apiKey = 'YOUR-API-KEY_HERE';` in the `src/` folder in the SmartBrain repository   
-5. run `yarn start` in the **SmartBrain-API** repo first and then in the SmartBrain repo.
-6. open your browser and visit [http://localhost:3001](http://localhost:3001/)
+3. run `yarn dev` in the **SmartBrain-API** repo first and then `yarn start` in the SmartBrain repo.
+4. pass the api key via an process.env variable
+5. set the db to this parameters
+```const db = knex({
+  client: 'pg',
+  connection: {
+    host : '127.0.0.1',
+    user : '',
+    password : '',
+    database : 'SmartBrainDB'
+  }
+```
+6. create a postgress db called `SmartBrainDB` with the following tables:
+```
+CREATE TABLE login (
+	id serial PRIMARY KEY,
+	HASH varchar(100) NOT NULL,
+	email text UNIQUE NOT NULL
+);
+```
+```
+CREATE TABLE users (
+    id serial PRIMARY KEY,
+	name varchar(100) NOT NULL,
+	email text UNIQUE NOT NULL,
+    entries BIGINT DEFAULT 0
+);
+```
 
-## ToDo
-* adding a database and connect it to the frontend
-* deploying on heroku
+
+## The backend was build with:
+* `node.js`
+* `express.js`
+* `postgres`
+* `clarifai`
+* `knex`
+* `bcrypt`
