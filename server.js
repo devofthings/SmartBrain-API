@@ -1,78 +1,34 @@
-const express = require('express')
-const app = express()
-var bodyParser = require('body-parser')
-var cors = require('cors')
-var _ = require('lodash')
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const bcrypt = require('bcrypt-nodejs');
+const knex = require('knex');
 
-const MongoClient = require('mongodb').MongoClient;
-const assert = require('assert');
-// connection url
-const url = 'mongodb://localhost:27017';
-// database Name
-const dbName = 'smartbrainDB';
-// use connect method to connect to the server
-MongoClient.connect(url, function(err, client) {
-  assert.equal(null, err);
-  console.log("Connected successfully to server");
-  const db = client.db(dbName);
-  client.close();
+const register = require('./controllers/register');
+const signin = require('./controllers/signin');
+const image = require('./controllers/image');
+const profile = require('./controllers/profile');
+
+const db = knex({
+  client: 'pg',
+  connection: {
+    host : '127.0.0.1',
+    user : '',
+    password : '',
+    database : 'SmartBrainDB'
+  }
 });
 
-const database = {
-  users: [{
-    id: '1',
-    name: 'Chris',
-    email: 'ez@grr.la',
-    entries: 0,
-    joined: new Date(),
-    password: 'cookies'
-  }]
-}
+const app = express();
 
 app.use(cors());
 app.use(bodyParser.json());
-app.get('/', (req, res) => res.send('You have found the server congrats..'))
 
-app.post('/signin', (req, res) => {
-  var request = req.body;
-  _.forEach(database.users, (user) => {
-    if (request.email === user.email && request.password === user.password) {
-      res.json(user)
-    }
-  })
-})
+app.get('/', (req, res) => res.send('you have found the server congrats..'))
+app.post('/signin', (req, res) => signin.handleSignin(req, res, db, bcrypt))
+app.post('/register', (req, res) => register.handleRegister(req, res, db, bcrypt))
+app.put('/image', (req, res) => image.handleImage(req, res, db))
+app.post('/imageurl', (req, res) => { image.handleApiCall(req, res)})
+app.get('/profile/:userID', (req, res) => profile.handleProfileGet(req, res, db))
 
-app.put('/image', (req, res) => {
-  database.users.forEach(user => {
-    if (user.id === req.body.id) {
-      user.entries++
-      res.json(user)
-    }
-  });
-  res.json('nope')
-})
-
-
-app.post('/register', (req, res) => {
-  database.users.push({
-    id: (database.users.length+1).toString(),
-    name: req.body.name,
-    email: req.body.email,
-    password: req.body.password,
-    entries: 0,
-    joined: new Date()
-  })
-  res.json(database.users[database.users.length - 1])
-})
-
-app.get('/profile/:userId', (req, res) => {
-  database.users.forEach(user => {
-    if (user.id === req.params.userId) {
-      return res.json(user);
-    }
-  })
-  // res.json('no user')
-
-})
-
-app.listen(3000, () => console.log('Server is listening on http://localhost:3000'))
+app.listen(3000, () => console.log('server is listening on http://localhost:3000'))
