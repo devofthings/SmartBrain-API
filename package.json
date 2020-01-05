@@ -4,7 +4,8 @@
   "main": "script.js",
   "repository": "https://github.com/crowbarcode/SmartBrain-API.git",
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "node server.js",
+    "dev": "nodemon server.js"
   },
   "author": "Chris Winter <corvusnebula@gmail.com>",
   "license": "MIT",
